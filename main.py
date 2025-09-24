@@ -58,10 +58,23 @@ def calcola_frequenze(df):
     return collections.Counter(tutti)
 
 def genera_schedina(freq, top_k=30):
-    numeri = list(range(1,91))
+    numeri = list(range(1, 91))
     top = [num for num, _ in freq.most_common(top_k)]
-    scelti = random.sample(top, 3) + random.sample(numeri, 3)
-    return sorted(set(scelti))[:6]
+
+    # Se ci sono meno di 3 numeri disponibili, prendi solo quelli
+    n_top = min(3, len(top))
+    n_rand = min(3, len(numeri))
+
+    scelti = random.sample(top, n_top) + random.sample(numeri, n_rand)
+    scelti = sorted(set(scelti))  # elimina eventuali duplicati
+
+    # Se non ho ancora 6 numeri, completo pescando a caso
+    while len(scelti) < 6:
+        extra = random.choice(numeri)
+        if extra not in scelti:
+            scelti.append(extra)
+
+    return sorted(scelti[:6])
 
 def main():
     df = scarica_ultime_estrazioni(20)
